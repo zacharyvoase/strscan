@@ -1,0 +1,502 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Scanner Documentation &mdash; Scanner v0.0.2
+ documentation</title>
+    <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.0.2
+',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Scanner v0.0.2
+ documentation" href="#" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="#">Scanner v0.0.2
+ documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-strscan">
+<span id="scanner-documentation"></span><h1>Scanner Documentation<a class="headerlink" href="#module-strscan" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="strscan.Scanner">
+<em class="property">class </em><tt class="descclassname">strscan.</tt><tt class="descname">Scanner</tt><big>(</big><em>string</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference internal" href="#strscan.Scanner" title="strscan.Scanner"><tt class="xref py py-class docutils literal"><span class="pre">Scanner</span></tt></a> is a near-direct port of Ruby&#8217;s <tt class="docutils literal"><span class="pre">StringScanner</span></tt>.</p>
+<p>The aim is to provide for lexical scanning operations on strings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">strscan</span> <span class="kn">import</span> <span class="n">Scanner</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;This is an example string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">eos</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+<span class="go">&#39;This&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+<span class="go">&#39; &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+<span class="go">&#39;is&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">eos</span><span class="p">()</span>
+<span class="go">False</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+<span class="go">&#39; &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+<span class="go">&#39;an&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+<span class="go">&#39; &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+<span class="go">&#39;example&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+<span class="go">&#39; &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+<span class="go">&#39;string&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">eos</span><span class="p">()</span>
+<span class="go">True</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\w+&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Its mechanism of operation is similar to <tt class="xref py py-class docutils literal"><span class="pre">StringIO</span></tt>, only instead of
+reading by passing a number of bytes, you read by passing a regex. A scan
+pointer tracks the current position through the string, and all scanning or
+searching happens on the rest of the string after this pointer.
+<a class="reference internal" href="#strscan.Scanner.scan" title="strscan.Scanner.scan"><tt class="xref py py-meth docutils literal"><span class="pre">scan()</span></tt></a> is the simple case of reading some text and advancing the scan
+pointer, but there are several other related methods which fulfil different
+requirements.</p>
+<p>All the methods on <a class="reference internal" href="#strscan.Scanner" title="strscan.Scanner"><tt class="xref py py-class docutils literal"><span class="pre">Scanner</span></tt></a> which take regexes will accept either
+regex strings or compiled pattern objects (as would be returned from
+<tt class="docutils literal"><span class="pre">re.compile()</span></tt>).</p>
+<dl class="method">
+<dt id="strscan.Scanner.beginning_of_line">
+<tt class="descname">beginning_of_line</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.beginning_of_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.beginning_of_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if the scan pointer is at the beginning of a line.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test</span><span class="se">\n</span><span class="s">test</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">beginning_of_line</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s">r&#39;te&#39;</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">beginning_of_line</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s">r&#39;st\n&#39;</span><span class="p">)</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">beginning_of_line</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">beginning_of_line</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.check">
+<tt class="descname">check</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>See what <a class="reference internal" href="#strscan.Scanner.scan" title="strscan.Scanner.scan"><tt class="xref py py-meth docutils literal"><span class="pre">scan()</span></tt></a> would return without advancing the pointer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="s">&#39;test &#39;</span><span class="p">)</span>
+<span class="go">&#39;test &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.check_until">
+<tt class="descname">check_until</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.check_until"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.check_until" title="Permalink to this definition">¶</a></dt>
+<dd><p>See what <a class="reference internal" href="#strscan.Scanner.scan_until" title="strscan.Scanner.scan_until"><tt class="xref py py-meth docutils literal"><span class="pre">scan_until()</span></tt></a> would return without advancing the pointer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">check_until</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+<span class="go">&#39;test &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.eos">
+<tt class="descname">eos</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.eos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.eos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return true if the scan pointer is at the end of the string.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">eos</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">eos</span><span class="p">()</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.exists">
+<tt class="descname">exists</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.exists"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>See what <a class="reference internal" href="#strscan.Scanner.skip_until" title="strscan.Scanner.skip_until"><tt class="xref py py-meth docutils literal"><span class="pre">skip_until()</span></tt></a> would return without advancing the pointer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+</pre></div>
+</div>
+<p>Returns the number of characters matched if it does exist, or <tt class="xref docutils literal"><span class="pre">None</span></tt>
+otherwise.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.getch">
+<tt class="descname">getch</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.getch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.getch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a single character and advance the scan pointer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+<span class="go">&#39;a&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+<span class="go">&#39;b&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">getch</span><span class="p">()</span>
+<span class="go">&#39;c&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="strscan.Scanner.match">
+<tt class="descname">match</tt><a class="headerlink" href="#strscan.Scanner.match" title="Permalink to this definition">¶</a></dt>
+<dd><p>The latest scan match.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.matched">
+<tt class="descname">matched</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.matched"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.matched" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the whole of the current match.</p>
+<p>This method returns whatever would have been returned by the latest
+<a class="reference internal" href="#strscan.Scanner.scan" title="strscan.Scanner.scan"><tt class="xref py py-meth docutils literal"><span class="pre">scan()</span></tt></a> call.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;test&#39;</span><span class="p">)</span>
+<span class="go">&#39;test&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">matched</span><span class="p">()</span>
+<span class="go">&#39;test&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.peek">
+<tt class="descname">peek</tt><big>(</big><em>length</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.peek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.peek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a number of characters without advancing the scan pointer.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">&#39;test st&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">&#39;test st&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="strscan.Scanner.pos">
+<tt class="descname">pos</tt><a class="headerlink" href="#strscan.Scanner.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current position of the scan pointer.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.post_match">
+<tt class="descname">post_match</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.post_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.post_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get whatever comes after the current match.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&#39;test string&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s">r&#39;test&#39;</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s&#39;</span><span class="p">)</span>
+<span class="go">&#39; &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">post_match</span><span class="p">()</span>
+<span class="go">&#39;string&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.pre_match">
+<tt class="descname">pre_match</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.pre_match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.pre_match" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get whatever comes before the current match.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&#39;test string&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s">r&#39;test&#39;</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;\s&#39;</span><span class="p">)</span>
+<span class="go">&#39; &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pre_match</span><span class="p">()</span>
+<span class="go">&#39;test&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="strscan.Scanner.prev">
+<tt class="descname">prev</tt><a class="headerlink" href="#strscan.Scanner.prev" title="Permalink to this definition">¶</a></dt>
+<dd><p>The last position of the scan pointer.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="strscan.Scanner.rest">
+<tt class="descname">rest</tt><a class="reference internal" href="_modules/strscan.html#Scanner.rest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.rest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the rest of the string that hasn&#8217;t been scanned yet.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;test&#39;</span><span class="p">)</span>
+<span class="go">&#39;test&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">rest</span>
+<span class="go">&#39; string&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.scan">
+<tt class="descname">scan</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.scan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.scan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Match a pattern from the current position.</p>
+<p>If a match is found, advances the scan pointer and returns the matched
+string. Otherwise returns <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">r&#39;test &#39;</span><span class="p">)</span>
+<span class="go">&#39;test &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.scan_full">
+<tt class="descname">scan_full</tt><big>(</big><em>regex</em>, <em>return_string=True</em>, <em>advance_pointer=True</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.scan_full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.scan_full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Match from the current position.</p>
+<p>If <cite>return_string</cite> is false and a match is found, returns the number of
+characters matched.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="s">r&#39; &#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="s">r&#39;test &#39;</span><span class="p">)</span>
+<span class="go">&#39;test &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="s">r&#39;stri&#39;</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">&#39;stri&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="s">r&#39;stri&#39;</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.scan_until">
+<tt class="descname">scan_until</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.scan_until"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.scan_until" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search for a pattern from the current position.</p>
+<p>If a match is found, advances the scan pointer and returns the matched
+string, from the current position <em>up to</em> the end of the match.
+Otherwise returns <tt class="xref docutils literal"><span class="pre">None</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_until</span><span class="p">(</span><span class="s">r&#39;foo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_until</span><span class="p">(</span><span class="s">r&#39;bar&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_until</span><span class="p">(</span><span class="s">r&#39; &#39;</span><span class="p">)</span>
+<span class="go">&#39;test &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.scan_upto">
+<tt class="descname">scan_upto</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.scan_upto"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.scan_upto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scan up to, but not including, the given regex.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="s">&#39;t&#39;</span><span class="p">)</span>
+<span class="go">&#39;t&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">scan_upto</span><span class="p">(</span><span class="s">r&#39; &#39;</span><span class="p">)</span>
+<span class="go">&#39;est&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos_history</span>
+<span class="go">[0, 1, 4]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.search_full">
+<tt class="descname">search_full</tt><big>(</big><em>regex</em>, <em>return_string=True</em>, <em>advance_pointer=True</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.search_full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.search_full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search from the current position.</p>
+<p>If <cite>return_string</cite> is false and a match is found, returns the number of
+characters matched (from the current position <em>up to</em> the end of the
+match).</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="s">r&#39; &#39;</span><span class="p">)</span>
+<span class="go">&#39;test &#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="s">r&#39;i&#39;</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">&#39;stri&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="s">r&#39;i&#39;</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.skip">
+<tt class="descname">skip</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.skip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.skip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#strscan.Scanner.scan" title="strscan.Scanner.scan"><tt class="xref py py-meth docutils literal"><span class="pre">scan()</span></tt></a>, but return the number of characters matched.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s">&#39;test &#39;</span><span class="p">)</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.skip_until">
+<tt class="descname">skip_until</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.skip_until"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.skip_until" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#strscan.Scanner.scan_until" title="strscan.Scanner.scan_until"><tt class="xref py py-meth docutils literal"><span class="pre">scan_until()</span></tt></a>, but return the number of characters matched.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;test string&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip_until</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+<span class="go">5</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.terminate">
+<tt class="descname">terminate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.terminate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.terminate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the scan pointer to the end of the string; clear match data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.unscan">
+<tt class="descname">unscan</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.unscan"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.unscan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Undo the last scan, resetting the position and match registers.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&#39;test string&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s">r&#39;te&#39;</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">rest</span>
+<span class="go">&#39;st string&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">unscan</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">rest</span>
+<span class="go">&#39;test string&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="strscan.get_regex">
+<tt class="descclassname">strscan.</tt><tt class="descname">get_regex</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#get_regex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.get_regex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure we have a compiled regular expression object.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_regex</span><span class="p">(</span><span class="s">&#39;string&#39;</span><span class="p">)</span> 
+<span class="go">&lt;_sre.SRE_Pattern object at 0x...&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;string&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_regex</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="ow">is</span> <span class="n">pattern</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">get_regex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> 
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">TypeError: Invalid regex type</span>: <span class="n">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      <a href="http://creativecommons.org/publicdomain/zero/1.0/">No rights reserved</a> |
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+  </body>
+</html>

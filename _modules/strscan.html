@@ -1,0 +1,536 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>strscan &mdash; Scanner v0.0.2
+ documentation</title>
+    <link rel="stylesheet" href="../_static/flasky.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.0.2
+',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="Scanner v0.0.2
+ documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+   
+  
+  <link media="only screen and (max-device-width: 480px)" href="../_static/small_flask.css" type= "text/css" rel="stylesheet" />
+
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">Scanner v0.0.2
+ documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for strscan</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+
+<div class="viewcode-block" id="Scanner"><a class="viewcode-back" href="../index.html#strscan.Scanner">[docs]</a><span class="k">class</span> <span class="nc">Scanner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    :class:`Scanner` is a near-direct port of Ruby&#39;s ``StringScanner``.</span>
+
+<span class="sd">    The aim is to provide for lexical scanning operations on strings::</span>
+
+<span class="sd">        &gt;&gt;&gt; s = Scanner(&quot;This is an example string&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; s.eos()</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+<span class="sd">        &#39;This&#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\s+&#39;)</span>
+<span class="sd">        &#39; &#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\s+&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+<span class="sd">        &#39;is&#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.eos()</span>
+<span class="sd">        False</span>
+
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\s+&#39;)</span>
+<span class="sd">        &#39; &#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+<span class="sd">        &#39;an&#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\s+&#39;)</span>
+<span class="sd">        &#39; &#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+<span class="sd">        &#39;example&#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\s+&#39;)</span>
+<span class="sd">        &#39; &#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+<span class="sd">        &#39;string&#39;</span>
+<span class="sd">        &gt;&gt;&gt; s.eos()</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\s+&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; s.scan(r&#39;\w+&#39;)</span>
+
+<span class="sd">    Its mechanism of operation is similar to :class:`StringIO`, only instead of</span>
+<span class="sd">    reading by passing a number of bytes, you read by passing a regex. A scan</span>
+<span class="sd">    pointer tracks the current position through the string, and all scanning or</span>
+<span class="sd">    searching happens on the rest of the string after this pointer.</span>
+<span class="sd">    :meth:`scan` is the simple case of reading some text and advancing the scan</span>
+<span class="sd">    pointer, but there are several other related methods which fulfil different</span>
+<span class="sd">    requirements.</span>
+
+<span class="sd">    All the methods on :class:`Scanner` which take regexes will accept either</span>
+<span class="sd">    regex strings or compiled pattern objects (as would be returned from</span>
+<span class="sd">    ``re.compile()``).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">string</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">string</span> <span class="o">=</span> <span class="n">string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_history</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_history</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">],</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Proxy for ``self.match.group(index)``.&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="s">&quot;No match on this scanner&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span>
+    <span class="k">def</span> <span class="nf">_set_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="n">pos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_pos</span><span class="p">,</span> <span class="n">_set_pos</span><span class="p">,</span>
+            <span class="n">doc</span><span class="o">=</span><span class="s">&quot;The current position of the scan pointer.&quot;</span><span class="p">)</span>
+    <span class="n">prev</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="k">lambda</span> <span class="bp">self</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_history</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span>
+            <span class="n">doc</span><span class="o">=</span><span class="s">&quot;The last position of the scan pointer.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_match</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match</span>
+    <span class="k">def</span> <span class="nf">_set_match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">match</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_match</span> <span class="o">=</span> <span class="n">match</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">match</span><span class="p">)</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_match</span><span class="p">,</span> <span class="n">_set_match</span><span class="p">,</span>
+            <span class="n">doc</span><span class="o">=</span><span class="s">&quot;The latest scan match.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Scanner.beginning_of_line"><a class="viewcode-back" href="../index.html#strscan.Scanner.beginning_of_line">[docs]</a>    <span class="k">def</span> <span class="nf">beginning_of_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return true if the scan pointer is at the beginning of a line.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test\\ntest\\n&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.beginning_of_line()</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; s.skip(r&#39;te&#39;)</span>
+<span class="sd">            2</span>
+<span class="sd">            &gt;&gt;&gt; s.beginning_of_line()</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; s.skip(r&#39;st\\n&#39;)</span>
+<span class="sd">            3</span>
+<span class="sd">            &gt;&gt;&gt; s.beginning_of_line()</span>
+<span class="sd">            True</span>
+<span class="sd">            &gt;&gt;&gt; s.terminate()</span>
+<span class="sd">            &gt;&gt;&gt; s.beginning_of_line()</span>
+<span class="sd">            True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+</div>
+<div class="viewcode-block" id="Scanner.terminate"><a class="viewcode-back" href="../index.html#strscan.Scanner.terminate">[docs]</a>    <span class="k">def</span> <span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set the scan pointer to the end of the string; clear match data.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="Scanner.eos"><a class="viewcode-back" href="../index.html#strscan.Scanner.eos">[docs]</a>    <span class="k">def</span> <span class="nf">eos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return true if the scan pointer is at the end of the string.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;abc&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.eos()</span>
+<span class="sd">            False</span>
+<span class="sd">            &gt;&gt;&gt; s.terminate()</span>
+<span class="sd">            &gt;&gt;&gt; s.eos()</span>
+<span class="sd">            True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span>
+</div>
+<div class="viewcode-block" id="Scanner.getch"><a class="viewcode-back" href="../index.html#strscan.Scanner.getch">[docs]</a>    <span class="k">def</span> <span class="nf">getch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a single character and advance the scan pointer.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;abc&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.getch()</span>
+<span class="sd">            &#39;a&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.getch()</span>
+<span class="sd">            &#39;b&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.getch()</span>
+<span class="sd">            &#39;c&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Scanner.peek"><a class="viewcode-back" href="../index.html#strscan.Scanner.peek">[docs]</a>    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">length</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get a number of characters without advancing the scan pointer.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.peek(7)</span>
+<span class="sd">            &#39;test st&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.peek(7)</span>
+<span class="sd">            &#39;test st&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Scanner.rest"><a class="viewcode-back" href="../index.html#strscan.Scanner.rest">[docs]</a>    <span class="k">def</span> <span class="nf">rest</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the rest of the string that hasn&#39;t been scanned yet.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;test&#39;)</span>
+<span class="sd">            &#39;test&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.rest</span>
+<span class="sd">            &#39; string&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">:]</span></div>
+    <span class="n">rest</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Scanner.matched"><a class="viewcode-back" href="../index.html#strscan.Scanner.matched">[docs]</a>    <span class="k">def</span> <span class="nf">matched</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the whole of the current match.</span>
+
+<span class="sd">        This method returns whatever would have been returned by the latest</span>
+<span class="sd">        :meth:`scan()` call.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;test&#39;)</span>
+<span class="sd">            &#39;test&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.matched()</span>
+<span class="sd">            &#39;test&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.pre_match"><a class="viewcode-back" href="../index.html#strscan.Scanner.pre_match">[docs]</a>    <span class="k">def</span> <span class="nf">pre_match</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get whatever comes before the current match.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&#39;test string&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.skip(r&#39;test&#39;)</span>
+<span class="sd">            4</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;\\s&#39;)</span>
+<span class="sd">            &#39; &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pre_match()</span>
+<span class="sd">            &#39;test&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()]</span>
+</div>
+<div class="viewcode-block" id="Scanner.post_match"><a class="viewcode-back" href="../index.html#strscan.Scanner.post_match">[docs]</a>    <span class="k">def</span> <span class="nf">post_match</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get whatever comes after the current match.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&#39;test string&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.skip(r&#39;test&#39;)</span>
+<span class="sd">            4</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;\\s&#39;)</span>
+<span class="sd">            &#39; &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.post_match()</span>
+<span class="sd">            &#39;string&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">():]</span>
+</div>
+<div class="viewcode-block" id="Scanner.unscan"><a class="viewcode-back" href="../index.html#strscan.Scanner.unscan">[docs]</a>    <span class="k">def</span> <span class="nf">unscan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Undo the last scan, resetting the position and match registers.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&#39;test string&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; s.skip(r&#39;te&#39;)</span>
+<span class="sd">            2</span>
+<span class="sd">            &gt;&gt;&gt; s.rest</span>
+<span class="sd">            &#39;st string&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.unscan()</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; s.rest</span>
+<span class="sd">            &#39;test string&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pos_history</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match_history</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Scanner.scan_full"><a class="viewcode-back" href="../index.html#strscan.Scanner.scan_full">[docs]</a>    <span class="k">def</span> <span class="nf">scan_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Match from the current position.</span>
+
+<span class="sd">        If `return_string` is false and a match is found, returns the number of</span>
+<span class="sd">        characters matched.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_full(r&#39; &#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_full(r&#39;test &#39;)</span>
+<span class="sd">            &#39;test &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_full(r&#39;stri&#39;, advance_pointer=False)</span>
+<span class="sd">            &#39;stri&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_full(r&#39;stri&#39;, return_string=False, advance_pointer=False)</span>
+<span class="sd">            4</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">get_regex</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">advance_pointer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">return_string</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="Scanner.search_full"><a class="viewcode-back" href="../index.html#strscan.Scanner.search_full">[docs]</a>    <span class="k">def</span> <span class="nf">search_full</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search from the current position.</span>
+
+<span class="sd">        If `return_string` is false and a match is found, returns the number of</span>
+<span class="sd">        characters matched (from the current position *up to* the end of the</span>
+<span class="sd">        match).</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.search_full(r&#39; &#39;)</span>
+<span class="sd">            &#39;test &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">            &gt;&gt;&gt; s.search_full(r&#39;i&#39;, advance_pointer=False)</span>
+<span class="sd">            &#39;stri&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">            &gt;&gt;&gt; s.search_full(r&#39;i&#39;, return_string=False, advance_pointer=False)</span>
+<span class="sd">            4</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regex</span> <span class="o">=</span> <span class="n">get_regex</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">match</span> <span class="o">=</span> <span class="n">regex</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">start_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span>
+        <span class="k">if</span> <span class="n">advance_pointer</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">return_string</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">string</span><span class="p">[</span><span class="n">start_pos</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">match</span><span class="o">.</span><span class="n">end</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_pos</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.scan"><a class="viewcode-back" href="../index.html#strscan.Scanner.scan">[docs]</a>    <span class="k">def</span> <span class="nf">scan</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Match a pattern from the current position.</span>
+
+<span class="sd">        If a match is found, advances the scan pointer and returns the matched</span>
+<span class="sd">        string. Otherwise returns ``None``.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;foo&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;bar&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(r&#39;test &#39;)</span>
+<span class="sd">            &#39;test &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.scan_until"><a class="viewcode-back" href="../index.html#strscan.Scanner.scan_until">[docs]</a>    <span class="k">def</span> <span class="nf">scan_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Search for a pattern from the current position.</span>
+
+<span class="sd">        If a match is found, advances the scan pointer and returns the matched</span>
+<span class="sd">        string, from the current position *up to* the end of the match.</span>
+<span class="sd">        Otherwise returns ``None``.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_until(r&#39;foo&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_until(r&#39;bar&#39;)</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_until(r&#39; &#39;)</span>
+<span class="sd">            &#39;test &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.scan_upto"><a class="viewcode-back" href="../index.html#strscan.Scanner.scan_upto">[docs]</a>    <span class="k">def</span> <span class="nf">scan_upto</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Scan up to, but not including, the given regex.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.scan(&#39;t&#39;)</span>
+<span class="sd">            &#39;t&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.scan_upto(r&#39; &#39;)</span>
+<span class="sd">            &#39;est&#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            4</span>
+<span class="sd">            &gt;&gt;&gt; s.pos_history</span>
+<span class="sd">            [0, 1, 4]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pos</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan_until</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos</span> <span class="o">-=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matched</span><span class="p">())</span>
+            <span class="c"># Remove the intermediate position history entry.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pos_history</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pre_match</span><span class="p">()[</span><span class="n">pos</span><span class="p">:]</span>
+</div>
+<div class="viewcode-block" id="Scanner.skip"><a class="viewcode-back" href="../index.html#strscan.Scanner.skip">[docs]</a>    <span class="k">def</span> <span class="nf">skip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like :meth:`scan`, but return the number of characters matched.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.skip(&#39;test &#39;)</span>
+<span class="sd">            5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.skip_until"><a class="viewcode-back" href="../index.html#strscan.Scanner.skip_until">[docs]</a>    <span class="k">def</span> <span class="nf">skip_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Like :meth:`scan_until`, but return the number of characters matched.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.skip_until(&#39; &#39;)</span>
+<span class="sd">            5</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.check"><a class="viewcode-back" href="../index.html#strscan.Scanner.check">[docs]</a>    <span class="k">def</span> <span class="nf">check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See what :meth:`scan` would return without advancing the pointer.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.check(&#39;test &#39;)</span>
+<span class="sd">            &#39;test &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scan_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.check_until"><a class="viewcode-back" href="../index.html#strscan.Scanner.check_until">[docs]</a>    <span class="k">def</span> <span class="nf">check_until</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See what :meth:`scan_until` would return without advancing the pointer.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.check_until(&#39; &#39;)</span>
+<span class="sd">            &#39;test &#39;</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Scanner.exists"><a class="viewcode-back" href="../index.html#strscan.Scanner.exists">[docs]</a>    <span class="k">def</span> <span class="nf">exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regex</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See what :meth:`skip_until` would return without advancing the pointer.</span>
+
+<span class="sd">            &gt;&gt;&gt; s = Scanner(&quot;test string&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; s.exists(&#39; &#39;)</span>
+<span class="sd">            5</span>
+<span class="sd">            &gt;&gt;&gt; s.pos</span>
+<span class="sd">            0</span>
+
+<span class="sd">        Returns the number of characters matched if it does exist, or ``None``</span>
+<span class="sd">        otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">search_full</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">return_string</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">advance_pointer</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="get_regex"><a class="viewcode-back" href="../index.html#strscan.get_regex">[docs]</a><span class="k">def</span> <span class="nf">get_regex</span><span class="p">(</span><span class="n">regex</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Ensure we have a compiled regular expression object.</span>
+
+<span class="sd">        &gt;&gt;&gt; import re</span>
+<span class="sd">        &gt;&gt;&gt; get_regex(&#39;string&#39;) # doctest: +ELLIPSIS</span>
+<span class="sd">        &lt;_sre.SRE_Pattern object at 0x...&gt;</span>
+<span class="sd">        &gt;&gt;&gt; pattern = re.compile(r&#39;string&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; get_regex(pattern) is pattern</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; get_regex(3) # doctest: +ELLIPSIS</span>
+<span class="sd">        Traceback (most recent call last):</span>
+<span class="sd">        ...</span>
+<span class="sd">        TypeError: Invalid regex type: 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">_pattern_type</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid regex type: </span><span class="si">%r</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">regex</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="n">regex</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" size="18" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      <a href="http://creativecommons.org/publicdomain/zero/1.0/">No rights reserved</a> |
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    </div>
+  </body>
+</html>
