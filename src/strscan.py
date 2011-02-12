@@ -77,6 +77,39 @@ class Scanner(object):
     prev = property(lambda self: self.pos_history[-2],
             doc="The last position of the scan pointer.")
 
+    def full_position(self):
+        r"""
+        Return the current scanner position as (lineno, columnno, line).
+
+        This method is helpful for providing debugging information to a user
+        (such as in a lexer/tokenizer as part of a parser).
+
+            >>> s = Scanner("abcdef\nghijkl\nmnopqr\nstuvwx\nyz")
+            >>> s.full_position()
+            (0, 0, 'abcdef')
+            >>> s.pos += 4
+            >>> s.full_position()
+            (0, 4, 'abcdef')
+            >>> s.pos += 2
+            >>> s.full_position()
+            (0, 6, 'abcdef')
+            >>> s.pos += 1
+            >>> s.full_position()
+            (1, 0, 'ghijkl')
+            >>> s.pos += 4
+            >>> s.full_position()
+            (1, 4, 'ghijkl')
+            >>> s.pos += 4
+            >>> s.full_position()
+            (2, 1, 'mnopqr')
+        """
+        line_start = self.string.rfind('\n', 0, self.pos) + 1
+        line_end = self.string.find('\n', self.pos)
+        lineno = self.string.count('\n', 0, self.pos)
+        columnno = self.pos - line_start
+        line = self.string[line_start:line_end]
+        return (lineno, columnno, line)
+
     def _get_match(self):
         return self._match
     def _set_match(self, match):
@@ -86,17 +119,17 @@ class Scanner(object):
             doc="The latest scan match.")
 
     def beginning_of_line(self):
-        """
+        r"""
         Return true if the scan pointer is at the beginning of a line.
 
-            >>> s = Scanner("test\\ntest\\n")
+            >>> s = Scanner("test\ntest\n")
             >>> s.beginning_of_line()
             True
             >>> s.skip(r'te')
             2
             >>> s.beginning_of_line()
             False
-            >>> s.skip(r'st\\n')
+            >>> s.skip(r'st\n')
             3
             >>> s.beginning_of_line()
             True
@@ -186,13 +219,13 @@ class Scanner(object):
         return self.match.group(0)
 
     def pre_match(self):
-        """
+        r"""
         Get whatever comes before the current match.
 
             >>> s = Scanner('test string')
             >>> s.skip(r'test')
             4
-            >>> s.scan(r'\\s')
+            >>> s.scan(r'\s')
             ' '
             >>> s.pre_match()
             'test'
@@ -200,13 +233,13 @@ class Scanner(object):
         return self.string[:self.match.start()]
 
     def post_match(self):
-        """
+        r"""
         Get whatever comes after the current match.
 
             >>> s = Scanner('test string')
             >>> s.skip(r'test')
             4
-            >>> s.scan(r'\\s')
+            >>> s.scan(r'\s')
             ' '
             >>> s.post_match()
             'string'
