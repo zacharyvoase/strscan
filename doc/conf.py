@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Scanner documentation build configuration file, created by
+# strscan documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb  3 11:35:05 2011.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Scanner'
+project = u'strscan'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -170,7 +170,7 @@ html_show_copyright = False
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Scannerdoc'
+htmlhelp_basename = 'strscandoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -184,7 +184,7 @@ htmlhelp_basename = 'Scannerdoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'Scanner.tex', u'Scanner Documentation',
+  ('index', 'strscan.tex', u'strscan Documentation',
    u'Zachary Voase', 'manual'),
 ]
 
@@ -217,6 +217,6 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'scanner', u'Scanner Documentation',
+    ('index', 'strscan', u'strscan Documentation',
      [u'Zachary Voase'], 1)
 ]
