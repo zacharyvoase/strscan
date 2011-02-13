@@ -77,38 +77,34 @@ class Scanner(object):
     prev = property(lambda self: self.pos_history[-2],
             doc="The last position of the scan pointer.")
 
-    def full_position(self):
+    def coords(self):
         r"""
-        Return the current scanner position as (lineno, columnno, line).
+        Return the current scanner position as `(lineno, columnno, line)`.
 
-        This method is helpful for providing debugging information to a user
-        (such as in a lexer/tokenizer as part of a parser).
+        This method is useful for displaying the scanner position in a human-
+        readable way. For example, you could use it to provide friendlier
+        debugging information when writing parsers.
 
             >>> s = Scanner("abcdef\nghijkl\nmnopqr\nstuvwx\nyz")
-            >>> s.full_position()
+            >>> s.coords()
             (0, 0, 'abcdef')
             >>> s.pos += 4
-            >>> s.full_position()
+            >>> s.coords()
             (0, 4, 'abcdef')
             >>> s.pos += 2
-            >>> s.full_position()
+            >>> s.coords()
             (0, 6, 'abcdef')
             >>> s.pos += 1
-            >>> s.full_position()
+            >>> s.coords()
             (1, 0, 'ghijkl')
             >>> s.pos += 4
-            >>> s.full_position()
+            >>> s.coords()
             (1, 4, 'ghijkl')
             >>> s.pos += 4
-            >>> s.full_position()
+            >>> s.coords()
             (2, 1, 'mnopqr')
         """
-        line_start = self.string.rfind('\n', 0, self.pos) + 1
-        line_end = self.string.find('\n', self.pos)
-        lineno = self.string.count('\n', 0, self.pos)
-        columnno = self.pos - line_start
-        line = self.string[line_start:line_end]
-        return (lineno, columnno, line)
+        return text_coords(self.string, self.pos)
 
     def _get_match(self):
         return self._match
@@ -455,6 +451,36 @@ class Scanner(object):
         otherwise.
         """
         return self.search_full(regex, return_string=False, advance_pointer=False)
+
+
+def text_coords(string, position):
+    r"""
+    Transform a simple index into a human-readable position in a string.
+
+    This function accepts a string and an index, and will return a triple of
+    `(lineno, columnno, line)` representing the position through the text. It's
+    useful for displaying a string index in a human-readable way::
+
+        >>> s = "abcdef\nghijkl\nmnopqr\nstuvwx\nyz"
+        >>> text_coords(s, 0)
+        (0, 0, 'abcdef')
+        >>> text_coords(s, 4)
+        (0, 4, 'abcdef')
+        >>> text_coords(s, 6)
+        (0, 6, 'abcdef')
+        >>> text_coords(s, 7)
+        (1, 0, 'ghijkl')
+        >>> text_coords(s, 11)
+        (1, 4, 'ghijkl')
+        >>> text_coords(s, 15)
+        (2, 1, 'mnopqr')
+    """
+    line_start = string.rfind('\n', 0, position) + 1
+    line_end = string.find('\n', position)
+    lineno = string.count('\n', 0, position)
+    columnno = position - line_start
+    line = string[line_start:line_end]
+    return (lineno, columnno, line)
 
 
 def get_regex(regex):
