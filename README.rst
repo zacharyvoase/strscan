@@ -49,6 +49,33 @@ All the methods on ``Scanner`` which take regexes will accept either regex
 strings or compiled pattern objects (as would be returned from
 ``re.compile()``).
 
+``text_coords()``
+-----------------
+
+There's also a useful function provided, ``text_coords()``, which resolves
+simple string indices into textual co-ordinates (line number and column)::
+
+    >>> s = "abcdef\nghijkl\nmnopqr\nstuvwx\nyz"
+    >>> text_coords(s, 0)
+    (0, 0, 'abcdef')
+    >>> text_coords(s, 4)
+    (0, 4, 'abcdef')
+    >>> text_coords(s, 6)
+    (0, 6, 'abcdef')
+    >>> text_coords(s, 7)
+    (1, 0, 'ghijkl')
+    >>> text_coords(s, 11)
+    (1, 4, 'ghijkl')
+    >>> text_coords(s, 15)
+    (2, 1, 'mnopqr')
+
+Installation
+------------
+
+You can get the module from PyPI::
+
+    pip install strscan
+
 (Un)license
 ===========
 
