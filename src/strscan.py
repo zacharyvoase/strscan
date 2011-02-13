@@ -2,6 +2,9 @@ import copy
 import re
 
 
+__all__ = ['Scanner', 'text_coords']
+
+
 class Scanner(object):
 
     """
