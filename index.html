@@ -6,14 +6,14 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Scanner Documentation &mdash; Scanner v0.0.2
+    <title>Scanner Documentation &mdash; Scanner v0.0.4
  documentation</title>
     <link rel="stylesheet" href="_static/flasky.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
-        VERSION:     '0.0.2
+        VERSION:     '0.0.4
 ',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Scanner v0.0.2
+    <link rel="top" title="Scanner v0.0.4
  documentation" href="#" />
    
   
@@ -40,7 +40,7 @@
         <li class="right" >
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="#">Scanner v0.0.2
+        <li><a href="#">Scanner v0.0.4
  documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -50,9 +50,13 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="module-strscan">
-<span id="scanner-documentation"></span><h1>Scanner Documentation<a class="headerlink" href="#module-strscan" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
+  <div class="section" id="scanner-documentation">
+<h1>Scanner Documentation<a class="headerlink" href="#scanner-documentation" title="Permalink to this headline">¶</a></h1>
+<p><tt class="xref py py-class docutils literal"><span class="pre">Scanner</span></tt> is a utility designed to help you carry out lexical,
+regex-based scanning operations on strings. There&#8217;s also
+<a class="reference internal" href="#strscan.text_coords" title="strscan.text_coords"><tt class="xref py py-func docutils literal"><span class="pre">text_coords()</span></tt></a>, which is a handy function for resolving simple
+string indices into textual co-ordinates (line number and column).</p>
+<span class="target" id="module-strscan"></span><dl class="class">
 <dt id="strscan.Scanner">
 <em class="property">class </em><tt class="descclassname">strscan.</tt><tt class="descname">Scanner</tt><big>(</big><em>string</em><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner" title="Permalink to this definition">¶</a></dt>
 <dd><p><a class="reference internal" href="#strscan.Scanner" title="strscan.Scanner"><tt class="xref py py-class docutils literal"><span class="pre">Scanner</span></tt></a> is a near-direct port of Ruby&#8217;s <tt class="docutils literal"><span class="pre">StringScanner</span></tt>.</p>
@@ -145,6 +149,35 @@ regex strings or compiled pattern objects (as would be returned from
 <span class="go">&#39;test &#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span>
 <span class="go">0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="strscan.Scanner.coords">
+<tt class="descname">coords</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/strscan.html#Scanner.coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.Scanner.coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current scanner position as <cite>(lineno, columnno, line)</cite>.</p>
+<p>This method is useful for displaying the scanner position in a human-
+readable way. For example, you could use it to provide friendlier
+debugging information when writing parsers.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="n">Scanner</span><span class="p">(</span><span class="s">&quot;abcdef</span><span class="se">\n</span><span class="s">ghijkl</span><span class="se">\n</span><span class="s">mnopqr</span><span class="se">\n</span><span class="s">stuvwx</span><span class="se">\n</span><span class="s">yz&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">(0, 0, &#39;abcdef&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">(0, 4, &#39;abcdef&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">(0, 6, &#39;abcdef&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">(1, 0, &#39;ghijkl&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">(1, 4, &#39;ghijkl&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">pos</span> <span class="o">+=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">s</span><span class="o">.</span><span class="n">coords</span><span class="p">()</span>
+<span class="go">(2, 1, &#39;mnopqr&#39;)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -443,19 +476,25 @@ match).</p>
 </dd></dl>
 
 <dl class="function">
-<dt id="strscan.get_regex">
-<tt class="descclassname">strscan.</tt><tt class="descname">get_regex</tt><big>(</big><em>regex</em><big>)</big><a class="reference internal" href="_modules/strscan.html#get_regex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.get_regex" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ensure we have a compiled regular expression object.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">re</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_regex</span><span class="p">(</span><span class="s">&#39;string&#39;</span><span class="p">)</span> 
-<span class="go">&lt;_sre.SRE_Pattern object at 0x...&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;string&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_regex</span><span class="p">(</span><span class="n">pattern</span><span class="p">)</span> <span class="ow">is</span> <span class="n">pattern</span>
-<span class="go">True</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_regex</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> 
-<span class="gt">Traceback (most recent call last):</span>
-<span class="c">...</span>
-<span class="gr">TypeError: Invalid regex type</span>: <span class="n">3</span>
+<dt id="strscan.text_coords">
+<tt class="descclassname">strscan.</tt><tt class="descname">text_coords</tt><big>(</big><em>string</em>, <em>position</em><big>)</big><a class="reference internal" href="_modules/strscan.html#text_coords"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#strscan.text_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transform a simple index into a human-readable position in a string.</p>
+<p>This function accepts a string and an index, and will return a triple of
+<cite>(lineno, columnno, line)</cite> representing the position through the text. It&#8217;s
+useful for displaying a string index in a human-readable way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">s</span> <span class="o">=</span> <span class="s">&quot;abcdef</span><span class="se">\n</span><span class="s">ghijkl</span><span class="se">\n</span><span class="s">mnopqr</span><span class="se">\n</span><span class="s">stuvwx</span><span class="se">\n</span><span class="s">yz&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_coords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="go">(0, 0, &#39;abcdef&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_coords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="go">(0, 4, &#39;abcdef&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_coords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">(0, 6, &#39;abcdef&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_coords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+<span class="go">(1, 0, &#39;ghijkl&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_coords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span class="go">(1, 4, &#39;ghijkl&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">text_coords</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+<span class="go">(2, 1, &#39;mnopqr&#39;)</span>
 </pre></div>
 </div>
 </dd></dl>
